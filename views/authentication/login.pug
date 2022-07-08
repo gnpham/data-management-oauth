@@ -1,0 +1,146 @@
+doctype html
+html(lang='en')
+  head
+    title KCM | Login
+    meta(charset='UTF-8')
+    meta(name='viewport' content='width=device-width, initial-scale=1.0')
+    meta(http-equiv='X-UA-Compatible' content='ie=edge')
+    script(src='/js/jquery.js')
+    script(src='/js/bootstrap.bundle.js')
+    script(src='/js/bootstrap.min.js')
+    link(rel='stylesheet' href='/css/bootstrap.min.css')
+    link(rel='stylesheet' href='/css/bootstrap-icons.css')
+    link(rel='stylesheet' href='/styles/css/style.css')
+  body.body-login
+    section.vh-100
+      .container.py-5.h-100
+        .row.d-flex.justify-content-center.h-100
+          .col-md-5.col-lg-7.col-xl-6
+            h1.project-name KCM DATA SYSTEM
+            img.img-fluid(src='/images/bg-image.jpg' alt='Background image')
+          .col-md-7.col-lg-5.col-xl-5.offset-xl-1
+            .card.card-login
+              .card-body-login
+                form#form-login(action="/login" method="POST")
+                  if userErrs
+                    .form-outline.invalid.mb-3
+                      label.form-label(for='email') Email address
+                      input#email.form-control(type='email' name='email' value=`${userErrs[0]}`)
+                      span.form-message= userErrs[2]
+                    .form-outline.mb-4
+                      label.form-label(for='password') Password
+                      input#password.form-control(type='password' name='password' value=`${userErrs[1]}`)
+                      span.form-message
+                  else if passErrs
+                    .form-outline.mb-3
+                      label.form-label(for='email') Email address
+                      input#email.form-control(type='email' name='email' value=`${passErrs[0]}`)
+                      span.form-message
+                    .form-outline.invalid.mb-4
+                      label.form-label(for='password') Password
+                      input#password.form-control(type='password' name='password' value=`${passErrs[1]}`)
+                      span.form-message= passErrs[2]
+                  else
+                    .form-outline.mb-3
+                        label.form-label(for='email') Email address
+                        input#email.form-control(type='email' name='email')
+                        span.form-message
+                    .form-outline.mb-4
+                      label.form-label(for='password') Password
+                      input#password.form-control(type='password' name='password')
+                      span.form-message
+                  //- .d-flex.justify-content-around.align-items-center.mb-3
+                  //-   a.forgot-password(href='#!') Forgot password?
+                  button.btn.btn-primary.btn-block(type='submit') Sign in
+                  .divider.d-flex.align-items-center.my-4.justify-content-center
+                    p.fw-bold.mx-3.mb-0.text-muted
+                    p
+                      | Not a member yet?
+                      a.link-register(data-toggle='modal' data-target='#modal-register')  Register now
+                      if existUser
+                        span.form-message= existUser
+                    p
+                  a.btn.btn-primary.btn-block.btn-login-facebook(href='/auth/facebook' role='button')
+                    i.bi.bi-facebook.bi-facebook-login
+                    | Sign in with Facebook
+                  a.btn.btn-danger.btn-block.btn-login-google(href='/auth/google' role='button')
+                    i.bi.bi-google.bi-google-login
+                    | Sign in with Google
+        #modal-register.modal.fade(tabindex='-1' role='dialog' aria-labelledby='modalCenterTitle' aria-hidden='true')
+          .modal-dialog(role='document')
+            .modal-content
+              form#form-register
+                .modal-header
+                  h4.modal-title Register
+                  button.close(type='button' data-dismiss='modal') &times;
+                .modal-body
+                  .form-outline.mb-3
+                    input#register-username.form-control(type='username' name='registerUsername' placeholder='User name')
+                    span.form-message
+                  .form-outline.mb-3
+                    input#register-email.form-control(type='email' name='registerEmail' placeholder='Email')
+                    span.form-message
+                  .form-outline.mb-3
+                    input#register-pass.form-control(type='password' name='registerPass' placeholder='Password')
+                    span.form-message
+                  .form-outline.mb-3
+                    input#register-repeat-pass.form-control(type='password' name='registerRepeatPass' placeholder='Repeat password')
+                    span.form-message
+                  .form-outline.mb-3
+                    input#register-phonenumber.form-control(type='text' name='registerPhonenumber' placeholder='Phone number')
+                    span.form-message
+                  .form-check.d-flex.justify-content-center.align-items-center.mb-3
+                    label.form-check-label By clicking Sign up, you agree to our Terms.
+                  button.btn.btn-primary.btn-block.mb-3(type='submit') Sign up
+    script(src='/js/validator.js')
+    script.
+      $(document).ready(function() {
+        Validator({
+          form: "#form-register",
+          formGroupSelector: '.form-outline',
+          errorSelector: '.form-message',
+          rules: [
+            Validator.isRequired("#register-username", "Please enter your username"),
+            Validator.isRequired("#register-email", "Please enter email address"),
+            Validator.isEmail('#register-email', "Please enter a valid email address"),
+            Validator.isRequired("#register-pass", "Please enter password"),
+            Validator.minLength("#register-pass", 6, "Password minimum 6 characters"),
+            Validator.isRequired("#register-repeat-pass", "Please confirm password"),
+            Validator.isDuplicate("#register-repeat-pass", function() {
+            return document.querySelector("#form-register #register-pass").value;
+            }, "Re-entered password is not correct"),
+            Validator.isRequired("#register-phonenumber", "Please enter the phone number"),
+            Validator.isIntergerNumber("#register-phonenumber", "Please enter a valid phone number"),
+          ],
+          onSubmit: function(data) {
+            jQuery.ajax({
+              type: "POST",
+              url: "/register",
+              dataType: "json",
+              data: data,
+              success: function (result) {
+                if (result.status == 200) {
+                  window.location.reload();
+                }
+              },
+              error: function() {
+                var registerEmailOutline = document.querySelector("#register-email").parentElement;
+                registerEmailOutline.classList.add('invalid');
+                registerEmailOutline.querySelector(".form-message").innerText = "Email is already in use. Please use another email.";
+              }
+             });
+          }
+        });
+
+        Validator({
+          form: '#form-login',
+          formGroupSelector: '.form-outline',
+          errorSelector: '.form-message',
+          rules: [
+            Validator.isRequired("#email", "Please enter your email"),
+            Validator.isEmail('#email', "Please enter a valid email address"),
+            Validator.isRequired('#password', "Please enter password"),
+            Validator.minLength('#password', 6, "Password minimum 6 characters"),
+          ]
+        });
+      });

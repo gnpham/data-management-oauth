@@ -1,0 +1,23 @@
+extends ../layouts/general
+block content
+  script(src='/styles/js/import-data-script.js')
+  .container-fluid.my-5
+    .row
+      .col-10.offset-1
+        .card.card-import-data
+          .card-header.bg-secondary.text-white.text-uppercase import json files to database
+          .card-body
+            if success
+              each su in success
+                .alert.alert-success=su
+            else if errors
+              each err in errors
+                .alert.alert-danger=err                         
+            form(action="/import-data/import" method="POST" enctype="multipart/form-data")
+              .form-group
+                label(for="files") Upload files
+                input#files.form-control-file(type="file" name="files" multiple required)
+              .form-group
+                label(for="version") Current version
+                input#version.form-control.col-md-2.col-lg-2(type="number" min="0" placeholder="Enter a number" name="version" required)
+              button.btn.btn-success.mb-2(type='submit') Import data

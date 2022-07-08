@@ -1,0 +1,38 @@
+extends ../layouts/general
+block content
+  script(src='/styles/js/export-data-script.js')
+  .container-fluid.my-4
+    .row
+      .col-10.offset-1.export-files
+        span Export Files
+        .export-version-title.font-weight-bold Database Version #{version}
+        span Migration script
+        textarea.migration-script.form-control(rows='20' name="migration-script" disabled)
+          if migrationData.length > 0
+            | #{migrationData[0]}
+        .data-file-title.my-2 Data files
+        if filesExport.length > 0
+          each file in filesExport
+            p.data-files
+              b #{file}
+              br
+        a.text-decoration-none(href="/export-files/download") Download All
+        .mark-update
+          .mark-updated-text.my-1 You much update the new changes to the app before you continue using kcm
+          a.btn.btn-success.col-lg-2.col-md-2(data-toggle='modal' data-target='#update-version-modal') Mark Updated
+      //- Confirm update version modal
+      #update-version-modal.modal.fade(tabindex='-1' role='dialog' aria-labelledby='modalLabel' aria-hidden='true')
+        .modal-dialog(role='document')
+          .modal-content
+            form(action="/export-files/update-version" method="POST")
+              .modal-header.bg-light
+                h5#modalCenterTitle.modal-title Update version
+                button.close(type='button' data-dismiss='modal' aria-label='Close')
+                  span(aria-hidden='true') &times;
+              .modal-body
+                .form-group
+                  label.col-form-label.font-weight-bold(for='version') New version
+                  input#version.form-control(type='number' min=version+1 placeholder=version+1 name='version' required)
+              .modal-footer
+                button.btn.btn-outline-secondary(type='button' data-dismiss='modal') Cancel
+                button.btn.btn-primary(type='submit') Save

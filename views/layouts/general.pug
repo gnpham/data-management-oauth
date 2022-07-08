@@ -1,0 +1,44 @@
+doctype html
+html(lang="en")
+  head
+    title KCM | Admin
+    meta(charset='UTF-8')
+    meta(name='viewport' content='width=device-width, initial-scale=1.0')
+    meta(http-equiv='X-UA-Compatible' content='ie=edge')
+    script(src='/js/jquery.js')
+    script(src='/js/bootstrap.bundle.js')
+    script(src='/js/bootstrap.min.js')
+    link(rel='stylesheet', href='/css/bootstrap.min.css')
+    link(rel='stylesheet', href='/css/bootstrap-icons.css')
+    link(rel='stylesheet', href='/styles/css/style.css')
+
+  body
+    nav.navbar.navbar-expand-lg.navbar-light
+      a.navbar-brand(href='/import-data') KCM ADMIN
+      button.navbar-toggler(type='button' data-toggle='collapse' data-target='#navbarNav' aria-controls='navbarNav' aria-expanded='false' aria-label='Toggle navigation')
+        span.navbar-toggler-icon
+      #navbarNav.collapse.navbar-collapse.justify-content-between
+        ul.navbar-nav
+          li.nav-item#import-data
+            a.nav-link(href='/import-data') Import data
+          li.nav-item#topics
+            a.nav-link(href='/topics') Topics
+          li.nav-item#modify
+            a.nav-link(href='/modified-questions') Modified Questions
+          li.nav-item#feedbacks
+            a.nav-link(href='/feedbacks') Feedbacks
+          if user.role == 1
+            li.nav-item#users
+              a.nav-link(href='/users') Users
+        ul.nav.navbar-nav.navbar-right
+          li.nav-item.dropdown
+            a#menuLink.nav-link.dropdown-toggle(href='#' role='button' data-toggle='dropdown' aria-expanded='false')
+              if user
+                span= user.username
+            .dropdown-menu.dropdown-menu-right.dropdown-info(aria-labelledby='menuLink')
+              a.dropdown-item(href='/profile') Your profile
+              a.dropdown-item(href='#') Settings
+              .dropdown-divider
+              a.dropdown-item(href='/logout') Sign out
+
+  block content

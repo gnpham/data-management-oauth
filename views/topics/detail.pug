@@ -1,0 +1,182 @@
+extends ../layouts/general
+block content
+  script(src='/styles/js/question-script.js')
+  .container-fluid.my-4
+    p.topic-title-detail(hidden='') #{topic.title}
+    .row.title-detail-row
+      .col-sm-7.col-md-6.col-lg-4.topic-id-detail.font-weight-bold ID: ##{topic.id}&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp#{topic.title}
+        a.btn.btn-outline-secondary.bi.bi-trash.float-right#delete-topic(data-toggle='modal' data-target='#delete-topic-modal')
+        a.btn.btn-outline-secondary.bi.bi-pencil-fill.float-right#edit-topic(data-toggle='modal' data-target='#edit-topic-modal')
+      .col-sm-5.col-md-6.col-lg-8
+        .btn-toggle.float-right
+          if topic.langCode == "vi"
+            a.btn.btn-sm.btn-light.large VI
+            a.btn.btn-sm.btn-light.normal(href=`/topics/${topic.id}-en`) EN
+          else
+            a.btn.btn-sm.btn-light.normal(href=`/topics/${topic.id}-vi`) VI
+            a.btn.btn-sm.btn-light.large EN
+        a.btn.btn-secondary.float-right#create-question(data-toggle='modal' data-target='#create-question-modal') Create question
+
+    hr
+    .row
+      if questions.length > 0
+        .col-md-4.col-lg-4.topic-detail
+          .card.topic-question
+            .card-body
+              .questions
+                .row
+                  each ques in questions
+                    .col-sm-12.col-md-12.col-lg-12
+                      .card.card-question-item
+                        a.card-block.stretched-link.text-decoration-none(href="")
+                          .card-text
+                            p.question-id(hidden='') #{ques.id + "-" + ques.langCode}
+                            p(style='white-space:pre;')
+                              b ##{ques.id} 
+                              span.font-weight-bold.caps #{ques.langCode}
+                              br
+                              span.question-text #{ques.question}
+        .col-md-8.col-lg-8
+          .card.topic-question
+            .card-body#topic-question-content(hidden='')
+              .question
+                .row.question-infor-title
+                  .col-sm-4.col-md-4.col-lg-4#modified-detail-title.font-weight-bold
+                    span#question-id-detail
+                    span#question-langcode.caps
+                    span &nbsp&nbsp
+                    span#modified-status
+                  .col-sm-4.col-md-4.col-lg-4
+                    .alert.alert-success.alert-update-success(hidden='') Update successfully
+                  .col-sm-4.col-md-4.col-lg-4
+                    .btn-questions.float-md-right.float-lg-right
+                      p.question-id-update(hidden='')
+                      a.btn.btn-sm.btn-secondary#save-question(hidden='') Save
+                      a.btn.btn-sm.btn-secondary#edit-question Edit
+                      a.btn.btn-sm.btn-danger#delete-question(data-toggle='modal' data-target='#delete-question-modal') Delete
+                hr
+                form
+                  .form-group
+                    textarea#question.form-control.font-weight-bold(rows='3' disabled='')
+                  .form-group
+                    div
+                      input#one(type='radio' name='option' value="0" disabled='')
+                      input#two(type='radio' name='option' value="1" disabled='')
+                      input#three(type='radio' name='option' value="2" disabled='')
+                      input#four(type='radio' name='option' value="3" disabled='')
+                      label.box.first(for='one')
+                        .course
+                          span.option A
+                          span.circle
+                          input.form-control.subject(type='text' name='answerA' required disabled='')
+                      label.box.second(for='two')
+                        .course
+                          span.option B
+                          span.circle
+                          input.form-control.subject(type='text' name='answerB' required disabled='')
+                      label.box.third(for='three')
+                        .course
+                          span.option C
+                          span.circle
+                          input.form-control.subject(type='text' name='answerC' required disabled='')
+                      label.box.forth(for='four')
+                        .course
+                          span.option D
+                          span.circle
+                          input.form-control.subject(type='text' name='answerD' required disabled='')
+                .form-group
+                  label(for='explain') Explanation
+                  textarea#explain.form-control(rows='5' disabled='')
+      //-  Edit topic modal
+      #edit-topic-modal.modal.fade(tabindex='-1' role='dialog' aria-labelledby='modalCenterTitle' aria-hidden='true')
+        .modal-dialog(role='document')
+          .modal-content
+            form#edit-topic-form
+              .modal-header.bg-light
+                h5#modalCenterTitle.modal-title Edit topic
+                button.close(type='button' data-dismiss='modal' aria-label='Close')
+                  span(aria-hidden='true') &times;
+              .modal-body
+                .form-group
+                  label.col-form-label.font-weight-bold(for='topic-title') Topic title
+                  input#topic-title.form-control(type='text' name='title' required)
+              .modal-footer
+                p.topic-id(hidden='') #{topic.id + "-" + topic.langCode}
+                button.btn.btn-outline-secondary(type='button' data-dismiss='modal') Cancel
+                button.btn.btn-primary(type='submit') Save
+      //- Delete topic modal
+      #delete-topic-modal.modal.fade(tabindex='-1' role='dialog' aria-labelledby='modalLabel' aria-hidden='true')
+        .modal-dialog(role='document')
+          .modal-content
+            .modal-body
+              span.bi.bi-question-circle  Are you sure you want to delete this topic?
+            .modal-footer
+              button.btn.btn-outline-secondary(type='button' data-dismiss='modal') Cancel
+              a.button.btn.btn-danger(href=`/topics/delete/${topic.id}`) Delete
+      //-  Create topic modal
+      #create-question-modal.modal.fade(tabindex='-1' role='dialog' aria-labelledby='modalCenterTitle' aria-hidden='true')
+        .modal-dialog.modal-dialog-centered.modal-lg(role='document')
+          .modal-content
+            form(action=`/questions/create?topicId=${topic.id}&langCode=${topic.langCode}` method="POST")
+              .modal-header.bg-light
+                h5#modalCenterTitle.modal-title Create question
+                a.close(href=`/topics/${topic.id + "-" + topic.langCode}` aria-label='Close')
+                  span(aria-hidden='true') &times;
+              .modal-body
+                .form-group
+                  if errors
+                    each err in errors
+                      .alert.alert-danger=err
+                  textarea#question-content.form-control(rows='2' name="question" placeholder="Question" required)
+                    if values
+                      | #{values.question}
+                  hr
+                  .row.answer.my-1
+                    .col-sm-2
+                      label.col-form-label.font-weight-bold(for='correct-ans') Right answer
+                    .col-sm-10
+                      input#correct-ans.col-sm-12.form-control(type='text' name='correctAnswer' required value=values ? values.correctAnswer : "")
+                  .row.answer.my-3
+                    .col-sm-2
+                      label.col-form-label.font-weight-bold(for='ans-one') Answer 1
+                    .col-sm-10
+                      input#ans-one.col-sm-12.form-control(type='text' name='answerOne' required value=values ? values.answerOne : "")
+                  .row.answer.my-3
+                    .col-sm-2
+                      label.col-form-label.font-weight-bold(for='ans-two')  Answer 2
+                    .col-sm-10
+                      input#ans-two.col-sm-12.form-control(type='text' name='answerTwo' required value=values ? values.answerTwo : "")
+                  .row.answer.my-3
+                    .col-sm-2
+                      label.col-form-label.font-weight-bold(for='ans-three')  Answer 3
+                    .col-sm-10
+                      input#ans-three.col-sm-12.form-control(type='text' name='answerThree' required value=values ? values.answerThree : "")
+                  .row.answer.my-3
+                    .col-sm-2
+                      label.col-form-label.font-weight-bold(for='ans-level')  Level
+                    .col-sm-10
+                      select(name="ansLevel")#ans-level.form-control
+                        option(value='1') Easy
+                        option(value='2') Difficult
+                  .row.answer.my-3
+                    .col-sm-12
+                      textarea.ans-explain.form-control(rows='4' name="explainVi" placeholder="Explanation - vietnamese")
+                        if values
+                          | #{values.explainVi}
+                  .row.answer.my-3
+                    .col-sm-12
+                      textarea.ans-explain.form-control(rows='4' name="explainEn" placeholder="Explanation - english")
+                        if values
+                          | #{values.explainEn}
+              .modal-footer
+                a.btn.btn-outline-secondary(href=`/topics/${topic.id + "-" + topic.langCode}`) Cancel
+                button.btn.btn-primary(type='submit') Create
+      //- Delete question modal
+      #delete-question-modal.modal.fade(tabindex='-1' role='dialog' aria-labelledby='modalLabel' aria-hidden='true')
+        .modal-dialog(role='document')
+          .modal-content
+            .modal-body
+              span.bi.bi-question-circle  Are you sure you want to delete this question?
+            .modal-footer
+              button.btn.btn-outline-secondary(type='button' data-dismiss='modal') Cancel
+              a.button.btn.btn-danger#delete-question-accept Delete

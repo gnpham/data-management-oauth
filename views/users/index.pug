@@ -1,0 +1,81 @@
+extends ../layouts/general
+block content
+  script(src='/styles/js/user-script.js')
+  .container-fluid.my-5
+    .row
+      .col-10.offset-1
+        .card
+          .card-body.card-user
+            .users.mt-4.mx-1
+              if users.length > 0
+                .row
+                  each user in users
+                    .col-sm-6.col-md-6.col-lg-6
+                      .card.card-cource-item.card-user-item.p-2
+                        a.card-block.stretched-link.text-decoration-none(href=`/users/${user._id}`)
+                          .card-text
+                            p(style='white-space:pre;')
+                              b #{user.username}
+                              br
+                              span.email Email: #{user.email}
+                              //- br
+                              //- span.password Password: #{user.password}
+                              br
+                              span.phone-number Phone number: #{user.phoneNumber}
+                              br
+                              if user.role == 1
+                                span.role Position: Admin
+                              else
+                                span.role Position: Writer
+
+    .row
+      .col-10.offset-1.d-flex.justify-content-center.mt-3
+        ul.pagination.justify-content-center
+          //- FIRST ITEM
+          if currentPage == 1
+            li.page-item.disabled
+              a.page-link(href='/users?page=1') First
+          else
+            li.page-item
+              a.page-link(href='/users?page=1') First
+
+          //- ITEMS
+          - var i = (currentPage > 3 ? currentPage - 2 : 1)
+          if i !== 1
+            li.page-item.disabled
+              a.page-link(href='#') ...
+          - for(; i <= (currentPage + 2) && i <= totalPages; i++){
+              if i == currentPage
+                li.page-item.active
+                  a.page-link(href=`/users?page=${i}`)=i
+              else
+                li.page-item
+                  a.page-link(href=`/users?page=${i}`)=i
+              if (i == currentPage + 2 && i < totalPages)
+                li.page-item.disabled
+                  a.page-link(href='#') ...
+          - }
+
+          //- LAST ITEM
+          if currentPage == totalPages
+            li.page-item.disabled
+              a.page-link(href='#') Last
+          else
+            li.page-item
+              a.page-link(href=`/users?page=${totalPages}`) Last
+        
+        //- Basic pagination not Last and First
+        //-  ul.pagination.justify-content-center
+        //-   li.page-item
+        //-     a.page-link(href='#', aria-label='Previous')
+        //-       span(aria-hidden='true') &laquo;
+        //-       span.sr-only Previous
+        //-   - for(var i = 0; i < totalPages ; i++){
+        //-       - var active = currentPage==i+1
+        //-       li.page-item(class = active ? 'active' : '')
+        //-         a.page-link(href='/users?page='+`${i+1}`)=i+1
+        //-   - }
+        //-   li.page-item
+        //-     a.page-link(href='#', aria-label='Next')
+        //-       span(aria-hidden='true') &raquo;
+        //-       span.sr-only Next

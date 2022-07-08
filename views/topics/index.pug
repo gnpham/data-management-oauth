@@ -1,0 +1,57 @@
+extends ../layouts/general
+block content
+  script(src='/styles/js/topic-script.js')
+  .container-fluid.my-5
+    .row.list-topic
+      .col-sm-8.col-md-7.col-lg-8.offset-1
+        b TOPICS
+      .col-sm-2.col-md-3.col-lg-2
+        .btn-toggle.float-right
+          .btn.btn-sm.btn-light.enable-vi VI
+          .btn.btn-sm.btn-light.enable-en EN
+        #create-topic.float-right
+          .btn.btn-sm.btn-secondary.btn-create-topic(data-toggle='modal' data-target='#create-topic-modal') Create
+    .row
+      .col-10.offset-1
+        .card
+          .card-body.card-topic
+            .topics.mt-4.mx-1
+              if topics.length > 0
+                .row
+                  each topic in topics
+                    .col-sm-6.col-md-6.col-lg-6(class=`topic-${topic.langCode}`)
+                      .card.card-cource-item.p-2
+                        a.card-block.stretched-link.text-decoration-none(href=`/topics/${topic.id}-${topic.langCode}`)
+                          .card-text
+                            p(style='white-space:pre;')
+                              b #{topic.title}
+                              br
+                              span.question-number #{topic.quesNumber} questions 
+                              if topic.quesUpdateNumber > 0
+                                span.question-sign / 
+                                span.question-update-number #{topic.quesUpdateNumber} updated
+                              br
+                              span.topic-langcode.caps #{topic.langCode}
+              else
+                p No topic to display
+    //-  Create topic modal form
+    #create-topic-modal.modal.fade(tabindex='-1' role='dialog' aria-labelledby='modalCenterTitle' aria-hidden='true')
+      .modal-dialog(role='document')
+        .modal-content
+          form(action="/topics/create" method="POST")
+            .modal-header.bg-light
+              h5#modalCenterTitle.modal-title Create topic
+              a.close(href="/topics" aria-label='Close')
+                span(aria-hidden='true') &times;
+            .modal-body
+              .form-group
+                if errors
+                  each err in errors
+                    .alert.alert-danger=err
+                label.col-form-label.font-weight-bold(for='topic-title-vi') Topic title (Vietnamese)
+                input#topic-title-vi.form-control(type='text' name='titleVi' required value=values ? values.titleVi : "")
+                label.col-form-label.font-weight-bold(for='topic-title-en') Topic title (English)
+                input#topic-title-en.form-control(type='text' name='titleEn' required value=values ? values.titleEn : "")
+            .modal-footer
+              a.btn.btn-secondary(href="/topics") Cancel
+              button.btn.btn-primary(type='submit') Create
