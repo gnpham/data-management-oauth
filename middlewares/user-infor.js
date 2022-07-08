@@ -2,7 +2,7 @@ const User = require("../models/user");
 
 module.exports.addInfor = async (req, res, next) => {
     console.log(req.session);
-    if(!req.session.passport.user) {
+    if(!req.session.passport == underfined) {
         res.redirect("/");
         return;
     }
