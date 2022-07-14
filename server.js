@@ -38,7 +38,7 @@ try {
     useUnifiedTopology: true,
     useFindAndModify: false,
   });
-} catch(e) {
+} catch(err) {
   console.log("could not connect");
 }
 
