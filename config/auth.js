@@ -1,4 +1,4 @@
-const domain = "https://242e-159-223-94-51.ap.ngrok.io";
+const domain = "https://kcmdata.herokuapp.com";
 
 module.exports = {
     "facebookAuth": {

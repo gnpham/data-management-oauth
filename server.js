@@ -21,7 +21,7 @@ const userInforMidd =  require("./middlewares/user-infor");
 const roleMidd = require("./middlewares/role");
 
 const app = express();
-const port = 8080;
+const port = process.env.PORT || 8080;
 
 app.set("views", "./views");
 app.set("view engine", "pug");
@@ -31,12 +31,16 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.use(cookieParser());
 
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useCreateIndex: true,
-  useUnifiedTopology: true,
-  useFindAndModify: false,
-});
+try {
+  mongoose.connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useCreateIndex: true,
+    useUnifiedTopology: true,
+    useFindAndModify: false,
+  });
+} catch(e) {
+  console.log("could not connect");
+}
 
 app.use(session({
   secret: 'kcmdatamanagement',
