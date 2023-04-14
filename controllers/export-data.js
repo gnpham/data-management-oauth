@@ -8,7 +8,7 @@ const Question = require("../models/question");
  *
  * @param {String} topicId
  * @param {String} langCode
- * @returns {zString} file's name of topic
+ * @returns {zString} file's name of topic - export json file
  */
 const exportJsonFiles = async (topicId, langCode) => {
   const topic = await Topic.findOne({
