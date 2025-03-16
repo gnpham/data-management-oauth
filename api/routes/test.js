@@ -15,6 +15,5 @@ axios
     }
   })
   .catch((error) => {
-    // Xử lý lỗi
     console.error(error);
   });
